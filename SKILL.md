@@ -32,6 +32,8 @@ Use this skill when a user wants to compare or understand changes in attention t
 
 The program requests daily views, aggregates them into monthly mean daily views, and calculates a within-series index with the first month's mean set to 100. Monthly Theil-Sen slope and first-half versus second-half change describe direction and consistency. A heuristic signal rating is based on data coverage, history length, direction agreement, and whether flagged daily spikes dominate the range. It is not a statistical probability or a forecast.
 
+Describe calendar patterns as observations, not established seasonality. Do not claim seasonal effects from one or two annual cycles. A seasonal conclusion requires multiple complete annual cycles and an explicit seasonal analysis. Monthly averages for the first and last months may cover only part of those months.
+
 The quality report includes expected and returned daily points, zero-view days, missing dates, coverage, and unusually large daily changes. A missing API point is not silently treated as a zero. The API may omit the most recent days; select a complete historical range and review the reported coverage. A sudden spike may reflect news, seasonality, bots, a change in article naming, or other causes. The data alone cannot identify its cause.
 
 Article moves and redirects can affect continuity. Review the resolved title and check for title changes during the study period when a trend has a sharp break. The PDF transliterates titles with non-Latin characters for font compatibility; use the JSON for exact titles.

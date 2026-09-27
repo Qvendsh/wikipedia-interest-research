@@ -54,7 +54,7 @@ def request_completion(model: str, messages: list[dict[str, Any]], api_key: str)
         "tool_choice": "auto",
         "parallel_tool_calls": False,
         "temperature": 0,
-        "max_tokens": 1200,
+        "max_tokens": 2400,
     }).encode("utf-8")
     request = urllib.request.Request(API_URL, data=payload, headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}, method="POST")
     try:
@@ -114,12 +114,13 @@ def evaluate() -> dict[str, Any]:
     except ValueError:
         start = end.replace(year=end.year - 2, day=28)
     skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
-    user_request = f"Compare how interest in astronomy changed in Ukrainian and English Wikipedia over the last two years, ending on {end.isoformat()}. Explain how reliable the descriptive trend is, report any important data quality or spike caveats, and provide the chart and one-page PDF paths. Use the research tool and follow the skill instructions."
+    user_request = f"Compare how interest in astronomy changed in Ukrainian and English Wikipedia over the last two years, ending on {end.isoformat()}. Explain how reliable the descriptive trend is, report data quality and spike caveats, and provide the exact chart and one-page PDF paths returned by the tool. Do not infer seasonality from one or two annual cycles. Use the research tool and follow the skill instructions. Keep the answer under 350 words."
     messages: list[dict[str, Any]] = [
         {"role": "system", "content": f"You are an AI agent using this skill. Follow its workflow and limits.\n\n{skill}"},
         {"role": "user", "content": user_request},
     ]
     transcript: dict[str, Any] = {"requested_model": model, "request": user_request, "turns": []}
+    transcript["completion_checks"] = []
     for _ in range(4):
         response = request_completion(model, messages, api_key)
         actual_model = response.get("model")
@@ -128,12 +129,14 @@ def evaluate() -> dict[str, Any]:
         choices = response.get("choices", [])
         if not choices:
             raise RuntimeError("OpenRouter returned no completion choices")
+        transcript["completion_checks"].append({"model": actual_model, "finish_reason": choices[0].get("finish_reason")})
         message = choices[0].get("message", {})
         messages.append(message)
         calls = message.get("tool_calls", [])
         if not calls:
             transcript["answer"] = message.get("content", "")
             transcript["usage"] = response.get("usage")
+            transcript["finish_reason"] = choices[0].get("finish_reason")
             return transcript
         for call in calls:
             function = call.get("function", {})

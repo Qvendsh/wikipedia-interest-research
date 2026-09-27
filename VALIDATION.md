@@ -22,7 +22,9 @@ The generated PDF was checked with Poppler. It contains one Letter page. The pag
 
 ## Low-cost model check
 
-The `scripts/evaluate_agent.py` harness is ready to send `SKILL.md` to a tool-enabled model, let it invoke the local research CLI, and save the full result and final answer. An actual model run has not been performed because this environment has no OpenRouter credential. Use the PowerShell instructions in `README.md` to run it with `openrouter/free` or a specific free model that supports tool calling. Until that run succeeds, model-level validation remains outstanding.
+The `scripts/evaluate_agent.py` harness sent `SKILL.md` to OpenRouter's free router and let the model invoke the local research CLI. The end-to-end request compared Ukrainian `Астрономія` with English `Astronomy` from 2024-09-26 through 2026-09-26. The tool resolved both articles and returned 731 of 731 daily points for each. The model reported the declining trends, used the signal ratings and quality data, avoided a seasonal conclusion, and included the chart and PDF paths.
+
+OpenRouter reported zero inference cost for the run. The router used `nvidia/nemotron-3-ultra-550b-a55b:free` for the tool-call response and `inclusionai/ling-3.0-flash-fin:free` for the final answer. The final completion ended with `stop`. Numeric statements were checked against `result.json`. The transcript, tool arguments, model IDs, cost, and answer are saved under `output/model-evaluation`.
 
 ## AI-assisted development
 
