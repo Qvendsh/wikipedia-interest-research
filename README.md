@@ -47,6 +47,20 @@ python -m unittest discover -s tests -v
 
 The tests use mocked Wikimedia responses and do not require network access. A separate live run is needed to verify current API availability.
 
+## Low-cost model check
+
+The optional `scripts/evaluate_agent.py` harness sends `SKILL.md` and a fixed astronomy comparison prompt to OpenRouter. It exposes the local research CLI as a tool, runs the tool call, and saves the model response and selected model name under `output/model-evaluation`.
+
+For a convenient local setup, copy `.env.example` to `.env`, put your key after `OPENROUTER_API_KEY=`, and keep the file local. `.env` is ignored by Git. Do not commit it or paste the key into chat.
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+python scripts/evaluate_agent.py
+```
+
+The key is not written to the transcript or Git history. `openrouter/free` routes to a currently available free model. The selected model can vary, so the harness records the actual model returned by OpenRouter. To use a specific free model that supports tool calling, set `OPENROUTER_MODEL` in `.env` to its current model ID with the `:free` variant.
+
 ## Agent integration
 
 Read `SKILL.md` for the agent workflow and interpretation rules. The agent supplies one `--series LANG:TITLE` argument per language. It should verify ambiguous article mappings and inspect `result.json` before summarizing. The command line tool does not guess article translations or infer that different pages have equivalent scope.

@@ -22,7 +22,7 @@ The generated PDF was checked with Poppler. It contains one Letter page. The pag
 
 ## Low-cost model check
 
-An actual low-cost model run was not available in this environment because no OpenRouter credential or compatible model runner was configured. The skill keeps the agent workflow to parameter extraction, one CLI invocation, and reading a stable JSON result, but this does not replace an actual model integration check. Run the sample in `SKILL.md` with a tool-enabled low-cost model before claiming model-level validation.
+The `scripts/evaluate_agent.py` harness is ready to send `SKILL.md` to a tool-enabled model, let it invoke the local research CLI, and save the full result and final answer. An actual model run has not been performed because this environment has no OpenRouter credential. Use the PowerShell instructions in `README.md` to run it with `openrouter/free` or a specific free model that supports tool calling. Until that run succeeds, model-level validation remains outstanding.
 
 ## AI-assisted development
 

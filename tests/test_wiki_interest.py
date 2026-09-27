@@ -1,11 +1,13 @@
 import datetime as dt
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from scripts import wiki_interest
+from scripts import evaluate_agent
 
 
 class FakeResponse:
@@ -23,6 +25,20 @@ class FakeResponse:
 
 
 class ResearchTests(unittest.TestCase):
+    def test_load_environment_file(self):
+        key_name = "WIKIPEDIA_SKILL_TEST_MODEL"
+        previous = os.environ.pop(key_name, None)
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                env_file = Path(temp_dir) / ".env"
+                env_file.write_text(f"{key_name}=openrouter/free\n", encoding="utf-8")
+                evaluate_agent.load_environment_file(env_file)
+                self.assertEqual(os.environ.get(key_name), "openrouter/free")
+        finally:
+            os.environ.pop(key_name, None)
+            if previous is not None:
+                os.environ[key_name] = previous
+
     def test_parse_series_preserves_title_colons(self):
         self.assertEqual(wiki_interest.parse_series("uk:Стаття: уточнення"), ("uk", "Стаття: уточнення"))
 
